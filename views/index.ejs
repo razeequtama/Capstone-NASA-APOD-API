@@ -3,9 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APOD Test</title>
+    <title>APOD</title>
 </head>
 <body>
-    
+    <h1>APOD</h1>
+    <h2>Press the button below to get a space fact!</h2>
+    <form action="/get-fact" method="GET">
+        <button type="submit">Get Fact</button>
+    </form>
+
+    <% if(locals.content) {%>
+        <div>
+            <h1><%= content.title %></h1>
+            <p><%= content.explanation %></p>
+            <% if (content.media_type === "image") { %>
+                <img src="<%= content.url %>" alt="space-fact: <%= content.title %>">
+            <% } else if (content.media_type === "video") { %>
+                <video
+                    src="<%= content.url %>"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    width="800">
+                </video>
+            <% } %>
+        </div>
+    <% }%>
 </body>
 </html>

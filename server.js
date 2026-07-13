@@ -9,7 +9,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const API_URL = process.env.URL_ENDPOINT;
 const API_KEY = process.env.API_KEY;
 
@@ -29,15 +29,24 @@ const config = {
     }
 }
 
-app.get("/", async (r, s) => {
+let content = null;
+
+app.get("/get-fact", async (r, s) => {
     try {
         const response = await axios.get(API_URL, config);
         const result = response.data;
-        console.log(result);
-        s.send(result);
+        content = result;
+        console.log(content.url);
+        s.redirect("/");
     } catch (error) {
-        s.send("Failed to fetch.");
+        content = error;
+        s.redirect("/");
     }
+})
+
+
+app.get("/", async (r, s) => {
+    s.render("index", {content});
 })
 
 app.listen(PORT, () => {

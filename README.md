@@ -36,6 +36,7 @@ cd <repository-name>
 ```bash
 npm install
 ```
+(Be sure to set the "type" to "module" on the package.json file)
 
 ### 3. Create a `.env` file
 
@@ -49,7 +50,7 @@ NASA_API_KEY=YOUR_API_KEY_HERE
 
 ### 4. Get a NASA API key
 
-Create a free API key from NASA and replace `YOUR_API_KEY_HERE` in your `.env` file.
+Create a free API key from NASA and replace `your_api_key` in your `.env` file.
 
 ### 5. Start the application
 
@@ -71,7 +72,9 @@ The application should now be running locally.
 
 | Variable       | Description       |
 | -------------- | ----------------- |
-| `NASA_API_KEY` | Your NASA API key |
+| `PORT` | Your Port (Set to 3001 by default) |
+| `URL_ENDPOINT` | APOD's API Endpoint |
+| `API_KEY`      | Your NASA API key |
 
 ## Project Structure
 
@@ -79,13 +82,14 @@ The application should now be running locally.
 .
 ├── public/
 ├── views/
+├─────index.ejs
 ├── routes/
 ├── .env
 ├── .env.example
 ├── .gitignore
 ├── package.json
 ├── package-lock.json
-└── index.js
+└── server.js
 ```
 
 ## API Used
