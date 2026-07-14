@@ -8,10 +8,9 @@ The application retrieves NASA's Astronomy Picture of the Day and displays its i
 
 * Fetch NASA's Astronomy Picture of the Day
 * Retrieve the APOD for a specific date
-* Display random APOD entries (using the `count` parameter)
 * Display images when the response contains an image
 * Embed videos when the response contains a video
-* Show the title, explanation, and date
+* Show the title and explanation
 * Keep API keys secure using environment variables
 
 ## Tech Stack
@@ -45,12 +44,12 @@ Copy the contents of `.env.example` into a new `.env` file.
 Example:
 
 ```env
-NASA_API_KEY=YOUR_API_KEY_HERE
+API_KEY=Your NASA API key
 ```
 
 ### 4. Get a NASA API key
 
-Create a free API key from NASA and replace `your_api_key` in your `.env` file.
+Create a free API key from NASA and replace `API_KEY` in your `.env` file.
 
 ### 5. Start the application
 
@@ -80,10 +79,8 @@ The application should now be running locally.
 
 ```text
 .
-├── public/
 ├── views/
 ├─────index.ejs
-├── routes/
 ├── .env
 ├── .env.example
 ├── .gitignore
@@ -104,7 +101,7 @@ The API may return either:
 The application checks the `media_type` field in the response and renders the appropriate HTML element:
 
 * `image` → `<img>`
-* `video` → `<iframe>`
+* `video` → `<vid>`
 
 ## Security
 

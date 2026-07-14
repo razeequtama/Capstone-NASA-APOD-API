@@ -31,18 +31,14 @@ const config = {
 
 let content = null;
 
-app.get("/get-fact", async (r, s) => {
+app.get("/get-fact", async (req, res) => {
     try {
         const response = await axios.get(API_URL, config);
-        const result = response.data;
-        content = result;
-        console.log(content.url);
-        s.redirect("/");
-    } catch (error) {
-        content = error;
-        s.redirect("/");
+        res.json(response.data);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch data." });
     }
-})
+});
 
 
 app.get("/", async (r, s) => {

@@ -4,31 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APOD</title>
+    <style>
+        /* HTML: <div class="loader"></div> */
+        .loader-container{
+            padding: 50px;
+        }
+        .loader {
+            width: 40px;
+            aspect-ratio: 1;
+            color: #f03355;
+            position: relative;
+            background:
+                conic-gradient(from 134deg at top   ,currentColor 92deg,#0000 0) top,
+                conic-gradient(from -46deg at bottom,currentColor 92deg,#0000 0) bottom;
+            background-size: 100% 50%;
+            background-repeat: no-repeat;
+        }
+        .loader:before {
+            content:'';
+            position: absolute;
+            inset: 0;
+            --g:currentColor 14.5px,#0000 0 calc(100% - 14.5px),currentColor 0;
+            background:
+                linear-gradient( 45deg,var(--g)),
+                linear-gradient(-45deg,var(--g));
+            animation: l7 1.5s infinite cubic-bezier(0.3,1,0,1);
+        }
+        #content{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 80%;
+            height: auto;
+            outline: black 2px solid;
+        }
+        @keyframes l7 {
+            33%  {inset:-10px;transform: rotate(0deg)}
+            66%  {inset:-10px;transform: rotate(90deg)}
+            100% {inset:0    ;transform: rotate(90deg)}
+        }
+    </style>
 </head>
 <body>
     <h1>APOD</h1>
     <h2>Press the button below to get a space fact!</h2>
-    <form action="/get-fact" method="GET">
-        <button type="submit">Get Fact</button>
-    </form>
-
-    <% if(locals.content) {%>
-        <div>
-            <h1><%= content.title %></h1>
-            <p><%= content.explanation %></p>
-            <% if (content.media_type === "image") { %>
-                <img src="<%= content.url %>" alt="space-fact: <%= content.title %>">
-            <% } else if (content.media_type === "video") { %>
-                <video
-                    src="<%= content.url %>"
-                    autoplay
-                    muted
-                    loop
-                    playsinline
-                    width="800">
-                </video>
-            <% } %>
+    <div id="content" class="fact">
+        <button id="getFactBtn">Get Fact</button>
+        <div class="loader-container">
+            <div id="loader" class="loader" style="display:none;"></div>
         </div>
-    <% }%>
+        <!-- <div id="content"></div> -->
+    </div>
+
+
+    <script>
+        const btn = document.getElementById("getFactBtn");
+        const loader = document.getElementById("loader");
+        const content = document.getElementById("content");
+
+        btn.addEventListener("click", async () => {
+            loader.style.display = "block";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch("/get-fact");
+                const data = await response.json();
+
+                content.innerHTML = `
+                    <h1>${data.title}</h1>
+                    <p>${data.explanation}</p>
+                    ${
+                        data.media_type === "image"
+                            ? `<img src="${data.url}" alt="${data.title}" width="800">`
+                            : `<video src="${data.url}" autoplay muted loop playsinline width="800"> </video>`
+                    }
+                `;
+            } catch (err) {
+                content.innerHTML = "<p>Something went wrong.</p>";
+            } finally {
+                loader.style.display = "none";
+                btn.disabled = false;
+                btn.style.display = "none";
+            }
+        });
+    </script>
 </body>
 </html>
