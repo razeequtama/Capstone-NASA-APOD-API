@@ -3,16 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APOD</title>
+    <title>APOD - Space Explorer</title>
     <style>
-        /* HTML: <div class="loader"></div> */
-        .loader-container{
-            padding: 50px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
+
+        :root {
+            --space-bg: #03030d;
+            --nebula-glow: radial-gradient(circle at 50% 50%, #1a103c 0%, #050212 100%);
+            --text-primary: #f0f4f8;
+            --text-secondary: #94a3b8;
+            --accent-cyan: #38bdf8;
+            --accent-pink: #f43f5e;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--space-bg);
+            background-image: var(--nebula-glow);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Subtle ambient star background animation */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px);
+            background-size: 550px 550px, 350px 350px;
+            background-position: 0 0, 40px 60px;
+            opacity: 0.4;
+            z-index: 0;
+            animation: cosmic-drift 100s linear infinite;
+        }
+
+        @keyframes cosmic-drift {
+            from { background-position: 0 0, 40px 60px; }
+            to { background-position: 550px 1100px, 390px 760px; }
+        }
+
+        /* App Wrapper */
+        .container {
+            z-index: 1;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        h1.main-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            background: linear-gradient(to right, #fff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        /* Controls Area */
+        .control-panel {
+            margin-bottom: 25px;
+            height: 60px; /* Prevents layout shifting during loads */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Futuristic Interactive Button */
+        #getFactBtn {
+            background: transparent;
+            color: var(--accent-cyan);
+            border: 2px solid var(--accent-cyan);
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+        }
+
+        #getFactBtn:hover:not(:disabled) {
+            background: var(--accent-cyan);
+            color: var(--space-bg);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
+        }
+
+        #getFactBtn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        #getFactBtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: var(--text-secondary);
+            color: var(--text-secondary);
+            box-shadow: none;
+        }
+
+        /* Modernized Custom Loader */
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .loader {
             width: 40px;
             aspect-ratio: 1;
-            color: #f03355;
+            color: var(--accent-cyan);
             position: relative;
             background:
                 conic-gradient(from 134deg at top   ,currentColor 92deg,#0000 0) top,
@@ -28,64 +152,118 @@
             background:
                 linear-gradient( 45deg,var(--g)),
                 linear-gradient(-45deg,var(--g));
-            animation: l7 1.5s infinite cubic-bezier(0.3,1,0,1);
-        }
-        #content{
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 80%;
-            height: auto;
-            outline: black 2px solid;
+            animation: l7 1.2s infinite cubic-bezier(0.3,1,0,1);
         }
         @keyframes l7 {
-            33%  {inset:-10px;transform: rotate(0deg)}
-            66%  {inset:-10px;transform: rotate(90deg)}
-            100% {inset:0    ;transform: rotate(90deg)}
+            33%  {inset:-8px;transform: rotate(0deg)}
+            66%  {inset:-8px;transform: rotate(90deg)}
+            100% {inset:0   ;transform: rotate(90deg)}
+        }
+
+        /* Glassmorphism Space Card for Content */
+        #content-target {
+            width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s ease;
+        }
+
+        /* Empty state styling */
+        #content-target:empty {
+            display: none;
+        }
+
+        /* Dynamic Media Elements injected via JS */
+        .space-card-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #fff;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .space-card-media {
+            width: 100%;
+            height: auto;           /* Allows the height to scale naturally with the width */
+            max-height: none;       /* Removes the 400px limit */
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .space-card-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+            text-align: left;
+            animation: fadeIn 1.2s ease forwards;
+        }
+
+        .error-msg {
+            color: var(--accent-pink);
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <h1>APOD</h1>
-    <h2>Press the button below to get a space fact!</h2>
-    <div id="content" class="fact">
-        <button id="getFactBtn">Get Fact</button>
-        <div class="loader-container">
-            <div id="loader" class="loader" style="display:none;"></div>
-        </div>
-        <!-- <div id="content"></div> -->
-    </div>
 
+    <div class="container">
+        <h1 class="main-title">APOD</h1>
+        <p class="subtitle">Press the button below to get a space fact!</p>
+        
+        <div class="control-panel">
+            <button id="getFactBtn">Get Fact</button>
+            <div class="loader-container">
+                <div id="loader" class="loader" style="display:none;"></div>
+            </div>
+        </div>
+
+        <div id="content-target"></div>
+    </div>
 
     <script>
         const btn = document.getElementById("getFactBtn");
         const loader = document.getElementById("loader");
-        const content = document.getElementById("content");
+        const contentTarget = document.getElementById("content-target");
 
         btn.addEventListener("click", async () => {
+
             loader.style.display = "block";
+            btn.style.display = "none";
             btn.disabled = true;
+            contentTarget.innerHTML = ""; 
 
             try {
                 const response = await fetch("/get-fact");
                 const data = await response.json();
 
-                content.innerHTML = `
-                    <h1>${data.title}</h1>
-                    <p>${data.explanation}</p>
+                contentTarget.innerHTML = `
+                    <h2 class="space-card-title">${data.title}</h2>
                     ${
                         data.media_type === "image"
-                            ? `<img src="${data.url}" alt="${data.title}" width="250">`
-                            : `<video src="${data.url}" autoplay muted loop playsinline width="250"> </video>`
+                            ? `<img class="space-card-media" src="${data.url}" alt="${data.title}">`
+                            : `<video class="space-card-media" src="${data.url}" autoplay muted loop playsinline></video>`
                     }
+                    <p class="space-card-desc">${data.explanation}</p>
                 `;
             } catch (err) {
-                content.innerHTML = "<p>Something went wrong.</p>";
+                contentTarget.innerHTML = "<p class='error-msg'>Something went wrong cosmic traveler. Try again.</p>";
+                btn.style.display = "block"; 
             } finally {
                 loader.style.display = "none";
                 btn.disabled = false;
-                btn.style.display = "none";
             }
         });
     </script>
