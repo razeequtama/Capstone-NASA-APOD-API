@@ -247,22 +247,31 @@
 
             try {
                 const response = await fetch("/get-fact");
+                if (!response.ok) throw new Error("Failed to fetch");
                 const data = await response.json();
+
+                // Check if the video is from YouTube to render it in an iframe safely
+                let mediaElement = '';
+                if (data.media_type === "image") {
+                    mediaElement = `<img class="space-card-media" src="${data.url}" alt="${data.title}">`;
+                } else if (data.media_type === "video") {
+                    if (data.url.includes("youtube.com") || data.url.includes("youtu.be")) {
+                        mediaElement = `<iframe class="space-card-media" src="${data.url}" frameborder="0" allowfullscreen></iframe>`;
+                    } else {
+                        mediaElement = `<video class="space-card-media" src="${data.url}" autoplay muted loop playsinline></video>`;
+                    }
+                }
 
                 contentTarget.innerHTML = `
                     <h2 class="space-card-title">${data.title}</h2>
-                    ${
-                        data.media_type === "image"
-                            ? `<img class="space-card-media" src="${data.url}" alt="${data.title}">`
-                            : `<video class="space-card-media" src="${data.url}" autoplay muted loop playsinline></video>`
-                    }
+                    ${mediaElement}
                     <p class="space-card-desc">${data.explanation}</p>
                 `;
             } catch (err) {
                 contentTarget.innerHTML = "<p class='error-msg'>Something went wrong cosmic traveler. Try again.</p>";
-                btn.style.display = "block"; 
             } finally {
                 loader.style.display = "none";
+                btn.style.display = "block"; // Crucial: bring the button back on both success and error!
                 btn.disabled = false;
             }
         });
