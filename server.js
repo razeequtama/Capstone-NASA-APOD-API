@@ -95,6 +95,13 @@ app.get("/get-fact", async (req, res) => {
 
         console.error(err.message);
 
+        console.log("URL:", API_URL);
+        console.log("API_KEY exists:", !!API_KEY);
+
+        console.log("Status:", err.response?.status);
+        console.log("Data:", err.response?.data);
+        console.log("Message:", err.message);
+
         res.status(500).json({
             error: "Failed to fetch data."
         });
