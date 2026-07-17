@@ -75,6 +75,7 @@ app.get("/get-fact", async (req, res) => {
             cache &&
             Date.now() - cacheTime < CACHE_DURATION
         ) {
+            console.log("Cache hit");
             return res.json(cache);
         }
 
@@ -89,6 +90,7 @@ app.get("/get-fact", async (req, res) => {
         cacheTime = Date.now();
 
         // Send the fresh data.
+        console.log("Fetching from NASA API...");
         res.json(cache);
 
     } catch (err) {
@@ -111,7 +113,7 @@ app.get("/get-fact", async (req, res) => {
 
 
 app.get("/", async (r, s) => {
-    s.render("index", {content});
+    s.render("index");
 })
 
 app.listen(PORT, () => {
