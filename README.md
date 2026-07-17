@@ -1,5 +1,8 @@
 # Capstone NASA APOD API
 
+## Try the Website Yourself!
+https://capstone-nasa-apod-api-production.up.railway.app
+
 A Node.js + Express capstone project that integrates with NASA's **Astronomy Picture of the Day (APOD)** API.
 
 The application retrieves NASA's Astronomy Picture of the Day and displays its information in a clean web interface using **Express** and **EJS**.
