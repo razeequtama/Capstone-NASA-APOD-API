@@ -30,8 +30,8 @@ The application retrieves NASA's Astronomy Picture of the Day and displays its i
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repository-url>
-cd <repository-name>
+git clone https://github.com/razeequtama/Capstone-NASA-APOD-API
+cd Capstone-NASA-APOD-API
 ```
 
 ### 2. Install dependencies
